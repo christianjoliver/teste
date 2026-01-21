@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Cadastro - Proteus JIT</title>
+    <style>
+        /* Estilos básicos para a página */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #ffffff;
+            width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #333;
+            margin: 0;
+        }
+
+        /* Container ajustado para ser o alvo do formulário */
+        #meu-container-formulario {
+            width: 95%;
+            max-width: 800px;
+            margin-bottom: 50px;
+            /* Removemos alturas fixas aqui para permitir que o iframe dite o tamanho */
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            color: #777;
+            font-size: 0.9em;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Formulário de Atendimento</h1>
+    </header>
+
+    <div id="meu-container-formulario"></div>
+
+    <footer>
+        &copy; 2026 Proteus JIT - Todos os direitos reservados.
+    </footer>
+
+<script>
+(function(w, d) {
+    // Alvo agora é o container principal definido no HTML
+    var target = d.getElementById('meu-container-formulario');
+    if (!target) return;
+
+    var iframe = d.createElement('iframe');
+    iframe.id = 'bitrix-custom-form';
+    
+    // Cache busting com timestamp para garantir que pegue a versão nova do formulario.html
+    iframe.src = 'https://proteusjit.com/formulario-bitrix/v2/formulario.html?t=' + Date.now();
+    
+    // Configuração de estilo para eliminar bordas e scroll interno
+    iframe.style.cssText = 'width:100%; border:none; overflow:hidden; display:block; height:600px; transition: height 0.3s ease;';
+    iframe.setAttribute('scrolling', 'no');
+    iframe.setAttribute('frameborder', '0');
+    iframe.setAttribute('allow', 'camera *; microphone *');
+    
+    target.appendChild(iframe);
+
+    // OUVINTE: Esta função aguarda o "grito" de altura vindo de dentro do iframe
+    w.addEventListener('message', function(e) {
+        if (e.data && e.data.type === 'FORM_HEIGHT') {
+            // Define a altura exata, sem somar valores fixos (+20, +30) dentro do loop
+            // Use uma folga apenas se necessário, mas fora do cálculo repetitivo
+            const alturaRecebida = parseInt(e.data.height);
+            
+            // Só ajusta se for uma mudança real para evitar o tremor/crescimento
+            if (iframe.style.height !== alturaRecebida + 'px') {
+                iframe.style.height = alturaRecebida + 'px';
+            }
+        }
+    }, false);
+})(window, document);
+</script>
+
+</body>
+</html>
